@@ -106,8 +106,8 @@ function gameReducer(state: GameState, action: Action): GameState {
             // Actually, we should update sets count immediately so UI reflects it, 
             // OR we can keep old sets count and update on NEXT_SET.
             // Let's update sets count immediately to show "1-0" in the sets dots.
-            let newSets = { ...state.sets };
-            let newSetScoresHistory = [...state.setScoresHistory];
+            const newSets = { ...state.sets };
+            const newSetScoresHistory = [...state.setScoresHistory];
             if (newIsSetFinished || newIsGameFinished) {
                 newSets[player] += 1;
                 // Record this set's final score
@@ -244,7 +244,7 @@ export function useGameLogic() {
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                dispatch({ type: "LOAD_GAME", state: parsed } as any);
+                dispatch({ type: "LOAD_GAME", state: parsed as GameState });
             } catch (e) {
                 console.error("Failed to load game state", e);
             }
