@@ -1,27 +1,46 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Modern Palette - Default Dark/Premium Feel */
+  --background: #0f172a;
+  /* Slate 950 */
+  --foreground: #f8fafc;
+  /* Slate 50 */
+
+  /* Player 1: Electric Blue / Indigo Gradient */
+  --primary: #4f46e5;
+  /* Indigo 600 */
+  --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+  --primary-foreground: #ffffff;
+
+  /* Player 2: Vibrant Rose / Orange Gradient */
+  --secondary: #e11d48;
+  /* Rose 600 */
+  --secondary-gradient: linear-gradient(135deg, #e11d48 0%, #f97316 100%);
+  --secondary-foreground: #ffffff;
+
+  --card: #1e293b;
+  /* Slate 800 */
+  --card-foreground: #f8fafc;
+
+  --border: #334155;
+  /* Slate 700 */
+
+  /* Font Families */
+  --font-sans: var(--font-geist-sans), 'Inter', system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), 'JetBrains Mono', monospace;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Force dark mode aesthetic by default for "Modern" feel, 
+   or refine media query if light mode is strictly required. 
+   Here we treat modern sport apps as Dark-First. */
+@media (prefers-color-scheme: light) {
+
+  /* Optional: sleek light mode using Slate 50 background */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f8fafc;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --border: #e2e8f0;
   }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -30,13 +49,41 @@ body {
   margin: 0;
 }
 
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.full-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
