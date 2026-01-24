@@ -1,42 +1,53 @@
+/* Main Container - The "Page" */
 .boardContainer {
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100vh;
     height: 100dvh;
-    /* Mobile browser support */
-    color: var(--foreground);
-    background-color: var(--background);
+    /* Mobile viewport fix */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     overflow: hidden;
+    position: relative;
+    min-height: 600px;
+    /* Ensure app has reasonable min height */
 }
 
+/* Header */
 .header {
-    padding: 1rem;
+    height: 64px;
+    padding: 0 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    position: absolute;
-    top: 0;
+    background-color: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(12px);
+    /* Modern Glass */
+    border-bottom: 1px solid hsl(var(--border));
     width: 100%;
     z-index: 10;
+    flex-shrink: 0;
 }
 
 .title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    /* Modern tight tracking */
 }
 
+/* Main Content Area */
 .scoresArea {
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* Mobile first: stacked */
+    overflow: hidden;
+    min-height: 0;
+    position: relative;
 }
 
+/* Player Sections */
 .playerSection {
     flex: 1;
     display: flex;
@@ -45,220 +56,238 @@
     align-items: center;
     position: relative;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: filter 0.2s ease;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    padding: 16px;
+    min-height: 200px;
+    /* Ensure click target is always substantial */
 }
 
 .playerSection:active {
-    filter: brightness(0.95);
+    filter: brightness(0.9);
 }
 
-/* Player Colors */
-/* Player Colors */
+/* Distinct Modern Player Styles - "Data Visualization Colors" */
 .player1 {
-    background: var(--primary-gradient);
-    color: var(--primary-foreground);
-    padding-top: 4rem;
-    /* Reduced for mobile */
-    box-shadow: 0 0 30px rgba(79, 70, 229, 0.3);
-    /* Glow effect */
+    background-color: var(--player-1-bg);
+    color: var(--player-1-fg);
 }
 
 .player2 {
-    background: var(--secondary-gradient);
-    color: var(--secondary-foreground);
-    box-shadow: 0 0 30px rgba(225, 29, 72, 0.3);
-    /* Glow effect */
+    background-color: var(--player-2-bg);
+    color: var(--player-2-fg);
 }
 
 .playerName {
-    font-size: clamp(1.2rem, 4vw, 1.5rem);
-    font-weight: 600;
-    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
     opacity: 0.9;
+    letter-spacing: -0.01em;
 }
 
 .score {
-    font-size: clamp(6rem, 15vw, 10rem);
-    /* Responsive scaling */
-    font-weight: 800;
+    font-size: clamp(6rem, 25vw, 14rem);
     line-height: 1;
+    font-weight: 700;
+    font-feature-settings: "tnum";
+    /* Tabular numbers for stability */
+    letter-spacing: -0.05em;
 }
 
+/* Server Indicator - Minimalist Badge */
 .serverIndicator {
     position: absolute;
-    top: 5rem;
-    right: 2rem;
-    background: #fff;
-    color: #000;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.8rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    top: 20px;
+    right: 20px;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Sets Dots - Clean */
 .setsContainer {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
     margin-top: 1rem;
+    padding: 6px 12px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
 }
 
-.setDot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-.setDotActive {
-    background-color: white;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.controls {
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    background: var(--background);
-    padding-bottom: env(safe-area-inset-bottom, 2rem);
-}
-
-@media (min-width: 768px) {
-    .scoresArea {
-        flex-direction: row;
-    }
-
-    .score {
-        font-size: clamp(8rem, 12vw, 12rem);
-    }
-
-    .player1 {
-        padding-top: 6rem;
-    }
-
-    .player2 {
-        padding-top: 6rem;
-    }
-}
-
-/* Icon Buttons in Header */
+/* Buttons - Shadcn Style (Ghost/Outline) */
 .iconButton {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    justify-content: center;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    gap: 0.5rem;
     transition: all 0.2s;
-    backdrop-filter: blur(4px);
 }
 
 .iconButton:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
+    background-color: hsl(var(--muted));
+}
+
+.activeBwf {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    border-color: hsl(var(--primary)) !important;
 }
 
 .setIndicator {
-    font-weight: bold;
-    font-size: 1.1rem;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 5px 10px;
-    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-left: 8px;
+    padding: 4px 12px;
+    background-color: hsl(var(--muted));
+    border-radius: var(--radius);
 }
 
-/* Round Decrement Button */
+/* Undo Button (Floating) */
 .decrementButton {
-    margin-top: 1rem;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
+    margin-top: 20px;
     width: 44px;
     height: 44px;
     border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: white;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.2s;
+    transition: background 0.2s;
 }
 
 .decrementButton:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
-/* Bottom Control Bar */
+/* Bottom Controls */
+.controls {
+    flex-shrink: 0;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    background-color: hsl(var(--background));
+    border-top: 1px solid hsl(var(--border));
+    /* We handle safe area in footer now or below controls */
+}
+
+/* Footer (Copyright) */
+.footer {
+    flex-shrink: 0;
+    padding: 1rem 0;
+    text-align: center;
+    background-color: hsl(var(--background));
+    color: hsl(var(--muted-foreground));
+    font-size: 0.75rem;
+    padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 1rem);
+}
+
 .controlButton {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    border: none;
-    background: #333;
-    color: white;
+    /* Pure Circle for controls */
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.2s;
 }
 
 .controlButton:hover {
-    background: #444;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    background-color: hsl(var(--muted));
+    transform: translateY(-2px);
 }
 
 .controlButton:active {
     transform: translateY(0);
 }
 
-/* Winner Overlay */
+/* Desktop */
+@media (min-width: 768px) {
+    .scoresArea {
+        flex-direction: row;
+        padding: 24px;
+        gap: 24px;
+        background-color: hsl(var(--muted));
+        /* Subtle bg for desktop gap */
+    }
+
+    .playerSection {
+        border-radius: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+}
+
+/* Overlay - Clean Backdrop Blur */
 .winnerOverlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
+    background-color: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(16px);
+    color: hsl(var(--foreground));
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3rem;
     flex-direction: column;
-    z-index: 100;
-    animation: fadeIn 0.5s ease;
+    z-index: 50;
+    animation: fadeIn 0.3s ease-out;
 }
 
 .newGameButton {
-    margin-top: 30px;
-    padding: 15px 40px;
-    font-size: 1.5rem;
+    margin-top: 2rem;
+    height: 48px;
+    padding: 0 32px;
+    border-radius: 24px;
     border: none;
-    border-radius: 30px;
-    background: white;
-    color: black;
-    font-weight: bold;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.2s;
 }
 
 .newGameButton:hover {
-    transform: scale(1.05);
+    opacity: 0.9;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
+        transform: scale(0.95);
     }
 
     to {
         opacity: 1;
+        transform: scale(1);
     }
 }

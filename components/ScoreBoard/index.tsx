@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, BookOpen, Volume2, VolumeX, Undo2, RefreshCw, MinusCircle, Download } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, MinusCircle, Download } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 export default function ScoreBoard() {
@@ -90,19 +90,15 @@ export default function ScoreBoard() {
         <div className={styles.boardContainer}>
             <header className={styles.header}>
                 <div className={styles.title}>{t.title}</div>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <button
                         onClick={() => setScoresMode(state.scoresMode === 'bwf' ? 'simple' : 'bwf')}
-                        className={styles.iconButton}
+                        className={`${styles.iconButton} ${state.scoresMode === 'bwf' ? styles.activeBwf : ''}`}
                         title={state.scoresMode === 'bwf' ? "BWF Rules" : "Simple Rules"}
-                        style={{
-                            background: state.scoresMode === 'bwf' ? 'rgba(255, 165, 0, 0.8)' : 'rgba(255, 255, 255, 0.1)',
-                            border: state.scoresMode === 'bwf' ? '1px solid orange' : '1px solid rgba(255,255,255,0.3)'
-                        }}
                     >
-                        <BookOpen style={iconStyle} />
+                        <Settings style={iconStyle} strokeWidth={2} />
                         <span style={{ fontSize: '0.8rem', marginLeft: '5px' }}>
-                            {state.scoresMode === 'bwf' ? "BWF" : "Sim-"}
+                            {state.scoresMode === 'bwf' ? "BWF" : "Simple"}
                         </span>
                     </button>
                     <button
@@ -143,7 +139,7 @@ export default function ScoreBoard() {
                         className={styles.decrementButton}
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
                     >
-                        <MinusCircle size={24} />
+                        <MinusCircle size={24} strokeWidth={2} />
                     </button>
 
                     <div className={styles.setsContainer}>
@@ -176,12 +172,12 @@ export default function ScoreBoard() {
                         className={styles.decrementButton}
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
                     >
-                        <MinusCircle size={24} />
+                        <MinusCircle size={24} strokeWidth={2} />
                     </button>
 
                     <div className={styles.setsContainer}>
                         {Array.from({ length: state.sets.player2 }).map((_, i) => (
-                            <BadmintonCock key={i} size={24} color="#ffd700" />
+                            <BadmintonCock key={i} size={24} />
                         ))}
                     </div>
                 </div>
@@ -201,28 +197,32 @@ export default function ScoreBoard() {
                     className={styles.controlButton}
                     title="Mute/Unmute"
                 >
-                    {isMuted ? <VolumeX /> : <Volume2 />}
+                    {isMuted ? <VolumeX strokeWidth={2} /> : <Volume2 strokeWidth={2} />}
                 </button>
                 <button onClick={undo} className={styles.controlButton} title="Undo">
-                    <Undo2 />
+                    <Undo2 strokeWidth={2} />
                 </button>
                 <button onClick={resetGame} className={styles.controlButton} title="Reset">
-                    <RefreshCw />
+                    <RefreshCw strokeWidth={2} />
                 </button>
             </div>
+
+            <footer className={styles.footer}>
+                <p>© 2026 hyeraaan</p>
+            </footer>
 
 
 
             {state.isSetFinished && !state.isGameFinished && (
                 <div className={styles.winnerOverlay}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '10px' }}>
-                        <BadmintonCock size={48} color="#ffd700" />
+                        <BadmintonCock size={48} className="text-primary" />
                         <h2 style={{ fontSize: '2rem' }}>
                             {state.setWinner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
                         </h2>
-                        <BadmintonCock size={48} color="#ffd700" />
+                        <BadmintonCock size={48} className="text-primary" />
                     </div>
-                    <div style={{ fontSize: '1.5rem', color: '#ffd700', marginBottom: '20px' }}>{t.setWinner}</div>
+                    <div style={{ fontSize: '1.5rem', opacity: 0.8, marginBottom: '20px' }}>{t.setWinner}</div>
 
                     <div style={{ fontSize: '4rem', fontWeight: 'bold', marginBottom: '30px' }}>
                         {state.scores.player1} : {state.scores.player2}
@@ -247,11 +247,11 @@ export default function ScoreBoard() {
                 <div className={styles.winnerOverlay}>
                     <div ref={resultRef} style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                            <BadmintonCock size={64} color="#ffd700" />
-                            <h1>
+                            <BadmintonCock size={64} className="text-primary" />
+                            <h1 style={{ fontSize: '3rem', fontWeight: 'bold' }}>
                                 {state.winner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
                             </h1>
-                            <BadmintonCock size={64} color="#ffd700" />
+                            <BadmintonCock size={64} className="text-primary" />
                         </div>
                         <h2 style={{ fontSize: '2rem', marginTop: '1rem', color: '#ccc' }}>{t.wins}</h2>
 
@@ -275,7 +275,7 @@ export default function ScoreBoard() {
                                         borderRadius: '8px'
                                     }}>
                                         <span style={{ width: '80px', textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '5px' }}>
-                                            {p1Won && <BadmintonCock size={20} color="#ffd700" />}
+                                            {p1Won && <BadmintonCock size={20} />}
                                             <span style={{ fontWeight: p1Won ? 'bold' : 'normal', color: p1Won ? '#ffd700' : '#fff' }}>
                                                 {setScore.player1}
                                             </span>
@@ -285,7 +285,7 @@ export default function ScoreBoard() {
                                             <span style={{ fontWeight: p2Won ? 'bold' : 'normal', color: p2Won ? '#ffd700' : '#fff' }}>
                                                 {setScore.player2}
                                             </span>
-                                            {p2Won && <BadmintonCock size={20} color="#ffd700" />}
+                                            {p2Won && <BadmintonCock size={20} />}
                                         </span>
                                     </div>
                                 );
@@ -310,9 +310,9 @@ export default function ScoreBoard() {
             )}
 
             {!state.isMatchStarted && (
-                <div className={styles.winnerOverlay} style={{ backgroundColor: 'rgba(0,0,0,0.95)' }}>
-                    <BadmintonCock size={120} color="#ffd700" style={{ marginBottom: '2rem' }} />
-                    <h1 style={{ fontSize: '3rem', marginBottom: '3rem', textAlign: 'center' }}>
+                <div className={styles.winnerOverlay} style={{ backgroundColor: 'hsl(var(--background) / 0.95)' }}>
+                    <BadmintonCock size={120} className="text-foreground" style={{ marginBottom: '2rem' }} />
+                    <h1 style={{ fontSize: '3rem', marginBottom: '3rem', textAlign: 'center', fontWeight: '800' }}>
                         {t.title}
                     </h1>
                     <button
@@ -321,7 +321,7 @@ export default function ScoreBoard() {
                             startMatch();
                         }}
                         className={styles.newGameButton}
-                        style={{ fontSize: '2rem', padding: '1.5rem 4rem' }}
+                        style={{ fontSize: '2rem', padding: '1.5rem 4rem', height: 'auto' }}
                     >
                         {t.startMatch}
                     </button>
