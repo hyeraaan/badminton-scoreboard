@@ -536,6 +536,7 @@
 @media screen and (orientation: landscape) and (max-height: 600px) {
     .boardContainer {
         min-height: 100vh;
+        min-height: 100dvh;
         /* Allow full height usage */
     }
 

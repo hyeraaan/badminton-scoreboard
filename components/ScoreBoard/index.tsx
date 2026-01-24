@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, MinusCircle, Download, Search } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, MinusCircle, Download, Search, Maximize, Minimize } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 export default function ScoreBoard() {
@@ -13,10 +13,31 @@ export default function ScoreBoard() {
     const { isMuted, toggleMute, speak, getScoreAnnouncement } = useVoiceAnnouncer(state);
     const [isMounted, setIsMounted] = React.useState(false);
     const [showHelp, setShowHelp] = React.useState(false);
+    const [isFullscreen, setIsFullscreen] = React.useState(false);
 
     React.useEffect(() => {
         setIsMounted(true);
+        // Listen for fullscreen change events to sync state
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
     }, []);
+
+    const toggleFullscreen = async () => {
+        if (!document.fullscreenElement) {
+            try {
+                await document.documentElement.requestFullscreen();
+            } catch (err) {
+                console.error("Error attempting to enable fullscreen:", err);
+            }
+        } else {
+            if (document.exitFullscreen) {
+                await document.exitFullscreen();
+            }
+        }
+    };
 
     const handleNameClick = (player: "player1" | "player2", e: React.MouseEvent) => {
         e.stopPropagation();
@@ -134,6 +155,13 @@ export default function ScoreBoard() {
                         title="Help"
                     >
                         <Search strokeWidth={2} size={18} />
+                    </button>
+                    <button
+                        onClick={toggleFullscreen}
+                        className={styles.iconButton}
+                        title={state.language === 'ko' ? "전체 화면" : "Toggle Fullscreen"}
+                    >
+                        {isFullscreen ? <Minimize strokeWidth={2} size={18} /> : <Maximize strokeWidth={2} size={18} />}
                     </button>
                     <button
                         onClick={() => setScoresMode(state.scoresMode === 'bwf' ? 'simple' : 'bwf')}
