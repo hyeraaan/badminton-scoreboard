@@ -12,11 +12,14 @@ export const metadata: Metadata = {
   title: "Badminton Scoreboard",
   description: "Professional Badminton Scoreboard PWA",
   manifest: "/manifest.json",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

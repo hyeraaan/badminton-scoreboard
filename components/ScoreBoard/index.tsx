@@ -5,13 +5,14 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, MinusCircle, Download } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, MinusCircle, Download, Search } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 export default function ScoreBoard() {
     const { state, incrementScore, resetGame, undo, setPlayerName, setLanguage, setScoresMode, decrementScore, nextSet, startMatch } = useGameLogic();
     const { isMuted, toggleMute, speak, getScoreAnnouncement } = useVoiceAnnouncer(state);
     const [isMounted, setIsMounted] = React.useState(false);
+    const [showHelp, setShowHelp] = React.useState(false);
 
     React.useEffect(() => {
         setIsMounted(true);
@@ -47,19 +48,52 @@ export default function ScoreBoard() {
 
         try {
             const canvas = await html2canvas(resultRef.current, {
-                backgroundColor: '#1a1a2e',
+                backgroundColor: '#0f172a', // Match Deep Navy background
                 scale: 2, // Higher quality
             });
 
-            const link = document.createElement('a');
-            const date = new Date().toISOString().slice(0, 10);
-            const p1Name = state.playerNames.player1.replace(/\s/g, '_');
-            const p2Name = state.playerNames.player2.replace(/\s/g, '_');
-            link.download = `badminton_${p1Name}_vs_${p2Name}_${date}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    alert(state.language === 'ko' ? '이미지 생성 실패' : 'Failed to create image');
+                    return;
+                }
+
+                const date = new Date().toISOString().slice(0, 10);
+                const p1Name = state.playerNames.player1.replace(/\s/g, '_');
+                const p2Name = state.playerNames.player2.replace(/\s/g, '_');
+                const filename = `badminton_${p1Name}_vs_${p2Name}_${date}.png`;
+                const file = new File([blob], filename, { type: 'image/png' });
+
+                // Try native sharing (Mobile "Save to Photos" support)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Badminton Match Result',
+                            text: `${state.playerNames.player1} vs ${state.playerNames.player2} Result`,
+                        });
+                        return; // Successfully shared
+                    } catch (shareError) {
+                        console.log('Share canceled or failed, falling back to download', shareError);
+                        // Fallthrough to download if share fails (or user cancels)
+                    }
+                }
+
+                // Fallback: Direct Download or Clipboard (Desktop)
+                try {
+                    // Create Download Link
+                    const link = document.createElement('a');
+                    link.download = filename;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (err) {
+                    console.error("Download failed", err);
+                }
+
+            }, 'image/png');
+
         } catch (error) {
-            console.error('Failed to save image:', error);
+            console.error('Failed to capture image:', error);
             alert(state.language === 'ko' ? '이미지 저장에 실패했습니다.' : 'Failed to save image.');
         }
     };
@@ -86,11 +120,21 @@ export default function ScoreBoard() {
 
     const iconStyle = { width: '20px', height: '20px' };
 
+
+
     return (
         <div className={styles.boardContainer}>
             <header className={styles.header}>
                 <div className={styles.title}>{t.title}</div>
+
                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <button
+                        onClick={() => setShowHelp(true)}
+                        className={styles.helpButton}
+                        title="Help"
+                    >
+                        <Search strokeWidth={2} size={18} />
+                    </button>
                     <button
                         onClick={() => setScoresMode(state.scoresMode === 'bwf' ? 'simple' : 'bwf')}
                         className={`${styles.iconButton} ${state.scoresMode === 'bwf' ? styles.activeBwf : ''}`}
@@ -138,6 +182,7 @@ export default function ScoreBoard() {
                         onClick={(e) => { e.stopPropagation(); decrementScore("player1"); }}
                         className={styles.decrementButton}
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
+                        style={{ zIndex: 5 }} // Ensure accessible
                     >
                         <MinusCircle size={24} strokeWidth={2} />
                     </button>
@@ -171,6 +216,7 @@ export default function ScoreBoard() {
                         onClick={(e) => { e.stopPropagation(); decrementScore("player2"); }}
                         className={styles.decrementButton}
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
+                        style={{ zIndex: 5 }}
                     >
                         <MinusCircle size={24} strokeWidth={2} />
                     </button>
@@ -184,9 +230,10 @@ export default function ScoreBoard() {
             </div>
 
             <div className={styles.controls}>
+
+
                 <button
                     onClick={() => {
-                        // Priming the audio engine
                         if (window.speechSynthesis) {
                             const u = new SpeechSynthesisUtterance("");
                             u.volume = 0;
@@ -211,122 +258,143 @@ export default function ScoreBoard() {
                 <p>© 2026 hyeraaan</p>
             </footer>
 
-
-
-            {state.isSetFinished && !state.isGameFinished && (
-                <div className={styles.winnerOverlay}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '10px' }}>
-                        <BadmintonCock size={48} className="text-primary" />
-                        <h2 style={{ fontSize: '2rem' }}>
-                            {state.setWinner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
-                        </h2>
-                        <BadmintonCock size={48} className="text-primary" />
-                    </div>
-                    <div style={{ fontSize: '1.5rem', opacity: 0.8, marginBottom: '20px' }}>{t.setWinner}</div>
-
-                    <div style={{ fontSize: '4rem', fontWeight: 'bold', marginBottom: '30px' }}>
-                        {state.scores.player1} : {state.scores.player2}
+            {/* Help Overlay */}
+            {showHelp && (
+                <div className={styles.helpOverlay} onClick={() => setShowHelp(false)}>
+                    <div className={styles.helpItem} style={{ top: '80px', right: '20px', alignItems: 'flex-end', textAlign: 'right' }}>
+                        <div className={styles.helpText}>
+                            {state.language === 'ko' ? '도움말 / 설정 / 언어' : 'Help / Settings / Language'}
+                        </div>
+                        <div className={styles.helpArrow}>↑</div>
                     </div>
 
-                    <button
-                        onClick={() => {
-                            const loveAll = state.language === 'ko'
-                                ? (state.scoresMode === 'bwf' ? "러브 올" : "영 대 영")
-                                : (state.scoresMode === 'bwf' ? "Love All" : "Zero - Zero");
-                            speak(loveAll);
-                            nextSet();
-                        }}
-                        className={styles.newGameButton}
-                    >
-                        {t.nextSet}
-                    </button>
+                    <div className={styles.helpItem} style={{ top: '40%', left: '50%', transform: 'translate(-50%, -50%)', alignItems: 'center' }}>
+                        <div className={styles.helpText} style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+                            {state.language === 'ko' ? '화면을 터치하여 득점' : 'Tap screen to Score'}
+                        </div>
+                        <div className={styles.helpText} style={{ fontSize: '0.9rem', opacity: 0.8 }}>
+                            {state.language === 'ko' ? '(이름을 눌러 수정하세요)' : '(Click name to edit)'}
+                        </div>
+                    </div>
+
+                    <div className={styles.helpItem} style={{ bottom: '100px', left: '50%', transform: 'translateX(-50%)', alignItems: 'center' }}>
+                        <div className={styles.helpArrow}>↓</div>
+                        <div className={styles.helpText}>
+                            {state.language === 'ko' ? '음소거 / 되돌리기 / 초기화' : 'Mute / Undo / Reset'}
+                        </div>
+                    </div>
+
+
                 </div>
             )}
 
-            {state.winner && (
+            {/* Set Result / Game Result Overlays */}
+            {((state.isSetFinished && !state.isGameFinished) || state.winner) && (
                 <div className={styles.winnerOverlay}>
-                    <div ref={resultRef} style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                            <BadmintonCock size={64} className="text-primary" />
-                            <h1 style={{ fontSize: '3rem', fontWeight: 'bold' }}>
-                                {state.winner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
-                            </h1>
-                            <BadmintonCock size={64} className="text-primary" />
-                        </div>
-                        <h2 style={{ fontSize: '2rem', marginTop: '1rem', color: '#ccc' }}>{t.wins}</h2>
+                    {state.isSetFinished && !state.isGameFinished ? (
+                        <>
+                            {/* Set Result Content */}
+                            <div className={styles.overlayContent}>
+                                <div className={styles.overlayHeaderRow}>
+                                    <BadmintonCock size={48} className="text-primary" />
+                                    <h2 className={styles.overlayTitle}>
+                                        {state.setWinner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
+                                    </h2>
+                                    <BadmintonCock size={48} className="text-primary" />
+                                </div>
+                                <div className={styles.overlaySubtitle}>{t.setWinner}</div>
 
-                        <div style={{ fontSize: '1.5rem', marginTop: '1.5rem', marginBottom: '10px', color: '#888' }}>
-                            {state.language === 'ko' ? '세트별 점수' : 'Set Scores'}
-                        </div>
+                                <div className={styles.overlayBigScore}>
+                                    {state.scores.player1} : {state.scores.player2}
+                                </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-                            {state.setScoresHistory.map((setScore, index) => {
-                                const p1Won = setScore.player1 > setScore.player2;
-                                const p2Won = setScore.player2 > setScore.player1;
-                                return (
-                                    <div key={index} style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '15px',
-                                        fontSize: '1.5rem',
-                                        padding: '10px 20px',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        borderRadius: '8px'
-                                    }}>
-                                        <span style={{ width: '80px', textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '5px' }}>
-                                            {p1Won && <BadmintonCock size={20} />}
-                                            <span style={{ fontWeight: p1Won ? 'bold' : 'normal', color: p1Won ? '#ffd700' : '#fff' }}>
-                                                {setScore.player1}
-                                            </span>
-                                        </span>
-                                        <span style={{ color: '#666' }}>Set {index + 1}</span>
-                                        <span style={{ width: '80px', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                            <span style={{ fontWeight: p2Won ? 'bold' : 'normal', color: p2Won ? '#ffd700' : '#fff' }}>
-                                                {setScore.player2}
-                                            </span>
-                                            {p2Won && <BadmintonCock size={20} />}
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                <button
+                                    onClick={() => {
+                                        const loveAll = state.language === 'ko'
+                                            ? (state.scoresMode === 'bwf' ? "러브 올" : "영 대 영")
+                                            : (state.scoresMode === 'bwf' ? "Love All" : "Zero - Zero");
+                                        speak(loveAll);
+                                        nextSet();
+                                    }}
+                                    className={styles.newGameButton}
+                                >
+                                    {t.nextSet}
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            {/* Game Result Content */}
+                            <div ref={resultRef} className={styles.overlayContent}>
+                                <div className={styles.overlayHeaderRow}>
+                                    <BadmintonCock size={64} className="text-primary" />
+                                    <h1 className={styles.overlayTitle}>
+                                        {state.winner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
+                                    </h1>
+                                    <BadmintonCock size={64} className="text-primary" />
+                                </div>
+                                <h2 className={styles.overlaySubtitle}>{t.wins}</h2>
 
-                        <div style={{ fontSize: '2rem', marginBottom: '20px', fontWeight: 'bold' }}>
-                            {state.language === 'ko' ? '최종' : 'Final'}: {state.sets.player1} - {state.sets.player2}
-                        </div>
-                    </div>
+                                <div className={styles.overlaySectionTitle}>
+                                    {state.language === 'ko' ? '세트별 점수' : 'Set Scores'}
+                                </div>
 
-                    <div style={{ display: 'flex', gap: '15px' }}>
-                        <button onClick={saveResultAsImage} className={styles.newGameButton} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Download size={20} />
-                            {state.language === 'ko' ? '저장' : 'Save'}
-                        </button>
-                        <button onClick={resetGame} className={styles.newGameButton}>
-                            {t.newGame}
-                        </button>
-                    </div>
+                                <div className={styles.setScoresList}>
+                                    {state.setScoresHistory.map((setScore, index) => {
+                                        const p1Won = setScore.player1 > setScore.player2;
+                                        const p2Won = setScore.player2 > setScore.player1;
+                                        return (
+                                            <div key={index} className={styles.setScoreItem}>
+                                                <span className={`${styles.setScoreName} ${p1Won ? styles.setWinnerName : ''}`}>
+                                                    {p1Won && <BadmintonCock size={20} />}
+                                                    {setScore.player1}
+                                                </span>
+                                                <span className={styles.setLabel}>Set {index + 1}</span>
+                                                <span className={`${styles.setScoreName} ${p2Won ? styles.setWinnerName : ''}`}>
+                                                    {setScore.player2}
+                                                    {p2Won && <BadmintonCock size={20} />}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className={styles.overlayFinalScore}>
+                                    {state.language === 'ko' ? '최종' : 'Final'}: {state.sets.player1} - {state.sets.player2}
+                                </div>
+
+                                <div className={styles.overlayButtonsRow}>
+                                    <button onClick={saveResultAsImage} className={styles.newGameButton} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Download size={20} />
+                                        {state.language === 'ko' ? '저장' : 'Save'}
+                                    </button>
+                                    <button onClick={resetGame} className={styles.newGameButton}>
+                                        {t.newGame}
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
 
             {!state.isMatchStarted && (
-                <div className={styles.winnerOverlay} style={{ backgroundColor: 'hsl(var(--background) / 0.95)' }}>
-                    <BadmintonCock size={120} className="text-foreground" style={{ marginBottom: '2rem' }} />
-                    <h1 style={{ fontSize: '3rem', marginBottom: '3rem', textAlign: 'center', fontWeight: '800' }}>
-                        {t.title}
-                    </h1>
-                    <button
-                        onClick={() => {
-                            if (!isMuted) speak(state.language === 'ko' ? "경기를 시작합니다" : "Match Start");
-                            startMatch();
-                        }}
-                        className={styles.newGameButton}
-                        style={{ fontSize: '2rem', padding: '1.5rem 4rem', height: 'auto' }}
-                    >
-                        {t.startMatch}
-                    </button>
-                    <div style={{ marginTop: '2rem', color: '#888' }}>
-                        {state.language === 'ko' ? "음성 안내를 위해 버튼을 눌러주세요" : "Click to enable voice guidance"}
+                <div className={`${styles.winnerOverlay} ${styles.startScreenOverlay}`} style={{ backgroundColor: 'hsl(var(--background) / 0.95)' }}>
+                    <div className={styles.startContent}>
+                        <BadmintonCock size={100} className="text-foreground" />
+                        <h1 className={styles.startTitle}>
+                            {t.title}
+                        </h1>
+                        <button
+                            onClick={() => {
+                                if (!isMuted) speak(state.language === 'ko' ? "경기를 시작합니다" : "Match Start");
+                                startMatch();
+                            }}
+                            className={styles.startButton}
+                        >
+                            {t.startMatch}
+                        </button>
+
                     </div>
                 </div>
             )}

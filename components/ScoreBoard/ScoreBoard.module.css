@@ -16,8 +16,9 @@
 
 /* Header */
 .header {
-    height: 64px;
-    padding: 0 16px;
+    min-height: 64px;
+    padding: env(safe-area-inset-top, 0px) 16px 0;
+    /* Top safe area */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -28,6 +29,8 @@
     width: 100%;
     z-index: 10;
     flex-shrink: 0;
+    height: auto;
+    /* Allow growth */
 }
 
 .title {
@@ -59,9 +62,12 @@
     transition: filter 0.2s ease;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    padding: 16px;
-    min-height: 200px;
-    /* Ensure click target is always substantial */
+    padding: 8px;
+    /* Reduced padding for mobile */
+    min-height: 150px;
+    /* Reduced min-height to fit smaller screens */
+    gap: 8px;
+    /* Consistent spacing between name/score/controls */
 }
 
 .playerSection:active {
@@ -80,15 +86,17 @@
 }
 
 .playerName {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+    /* Slightly smaller base for mobile */
     font-weight: 500;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     opacity: 0.9;
     letter-spacing: -0.01em;
 }
 
 .score {
-    font-size: clamp(6rem, 25vw, 14rem);
+    font-size: clamp(4rem, 25vw, 14rem);
+    /* Reduced minimum from 6rem to 4rem */
     line-height: 1;
     font-weight: 700;
     font-feature-settings: "tnum";
@@ -181,13 +189,79 @@
 /* Bottom Controls */
 .controls {
     flex-shrink: 0;
-    padding: 24px;
+    padding: 16px;
     display: flex;
     justify-content: center;
     gap: 20px;
     background-color: hsl(var(--background));
     border-top: 1px solid hsl(var(--border));
     /* We handle safe area in footer now or below controls */
+}
+
+/* Help / Search Mode */
+.helpButton {
+    /* Header integration */
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    /* Remove absolute positioning */
+    position: static;
+    box-shadow: none;
+    padding: 0 12px;
+    /* Match iconButton padding if circle not desired */
+}
+
+.helpButton:hover {
+    background-color: hsl(var(--muted));
+    transform: none;
+}
+
+.helpOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    cursor: pointer;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.helpItem {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: white;
+    pointer-events: none;
+    /* Let clicks pass through to close overlay */
+}
+
+.helpText {
+    font-size: 1rem;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+}
+
+.helpArrow {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffd700;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* Footer (Copyright) */
@@ -225,23 +299,40 @@
     transform: translateY(0);
 }
 
-/* Desktop */
-@media (min-width: 768px) {
+/* Desktop / Large Landscape Tablet */
+@media (min-width: 1024px) {
     .scoresArea {
         flex-direction: row;
         padding: 24px;
         gap: 24px;
         background-color: hsl(var(--muted));
-        /* Subtle bg for desktop gap */
-    }
 
-    .playerSection {
-        border-radius: 24px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .playerSection {
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
     }
 }
 
-/* Overlay - Clean Backdrop Blur */
+/* Tablet (Portrait/Small Landscape) tweaks - Independent of above */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .scoresArea {
+        padding: 24px;
+        /* More padding than mobile */
+    }
+
+    .score {
+        /* Increase minimum size for tablets since they have more vertical space than phones */
+        font-size: clamp(8rem, 30vw, 16rem);
+    }
+
+    .playerSection {
+        min-height: 250px;
+        /* More roomy on tablet */
+    }
+}
+
+/* Overlay - Unified Styling for Set Result & Game Result */
 .winnerOverlay {
     position: absolute;
     top: 0;
@@ -257,6 +348,105 @@
     flex-direction: column;
     z-index: 50;
     animation: fadeIn 0.3s ease-out;
+}
+
+/* Container inside overlay (content wrapper) */
+.overlayContent {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.overlayHeaderRow {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.overlayTitle {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.overlaySubtitle {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    color: #ccc;
+    margin-bottom: 20px;
+    /* Unified Spacing */
+}
+
+.overlaySectionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #888;
+}
+
+.overlayBigScore {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.overlayFinalScore {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Set Scores List Styling */
+.setScoresList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.setScoreItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    font-size: 1.5rem;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.setScoreName {
+    width: 100px;
+    /* Fixed width for alignment */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* P1 align right */
+.setScoreItem>span:first-child {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+/* P2 align left */
+.setScoreItem>span:last-child {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.setWinnerName {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.setLabel {
+    color: #666;
+    font-size: 1rem;
 }
 
 .newGameButton {
@@ -280,6 +470,12 @@
     opacity: 0.9;
 }
 
+.overlayButtonsRow {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -289,5 +485,185 @@
     to {
         opacity: 1;
         transform: scale(1);
+    }
+}
+
+/* Start Screen Specifics */
+.startContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+.startTitle {
+    font-size: 3rem;
+    font-weight: 800;
+    text-align: center;
+    margin: 0;
+}
+
+.startButton {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 1rem 3rem;
+    border-radius: 9999px;
+    border: none;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+    margin-top: 10px;
+}
+
+.startButton:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.startButton:active {
+    transform: scale(0.95);
+}
+
+.startInstruction {
+    margin-top: 1rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.9rem;
+}
+
+/* Mobile Landscape Optimization (Phone sideways) */
+@media screen and (orientation: landscape) and (max-height: 600px) {
+    .boardContainer {
+        min-height: 100vh;
+        /* Allow full height usage */
+    }
+
+    .scoresArea {
+        flex-direction: row;
+        /* Force side-by-side */
+        padding: 0;
+    }
+
+    .playerSection {
+        min-height: 0;
+        /* Let flex dictate height */
+        padding: 4px;
+        gap: 4px;
+    }
+
+    .score {
+        font-size: clamp(3rem, 35vh, 6rem);
+        /* Responsive vertically */
+    }
+
+    .playerName {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+
+    /* Hide footer in tight landscape to prioritize game */
+    .footer {
+        display: none;
+    }
+
+    .controls {
+        padding: 4px 16px;
+    }
+
+    .controlButton {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Landscape Overlay Overrides */
+    .winnerOverlay {
+        padding: 5px !important;
+        justify-content: center;
+    }
+
+    .overlayContent {
+        padding: 0 !important;
+        transform: none !important;
+        width: 100%;
+        gap: 2px !important;
+        /* Tight vertical spacing */
+    }
+
+    .overlayTitle {
+        font-size: 1.5rem !important;
+        margin-bottom: 0 !important;
+    }
+
+    .overlaySubtitle {
+        font-size: 1rem !important;
+        margin: 2px 0 !important;
+    }
+
+    .overlayBigScore {
+        font-size: 2.5rem !important;
+        margin-bottom: 5px !important;
+        line-height: 1 !important;
+    }
+
+    .overlaySectionTitle {
+        display: none;
+        /* Hide 'Set Scores' text to save space */
+    }
+
+    /* Horizontal List for Landscape */
+    .setScoresList {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px !important;
+        margin-bottom: 5px !important;
+        max-width: none;
+        /* Let it expand */
+    }
+
+    .setScoreItem {
+        padding: 2px 10px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .setScoreName {
+        width: auto !important;
+        /* Allow shrink */
+    }
+
+    .overlayFinalScore {
+        font-size: 1.1rem !important;
+        margin-bottom: 5px !important;
+    }
+
+    .newGameButton {
+        margin-top: 0 !important;
+        /* Margin now handled by row container */
+        height: 32px;
+        font-size: 0.9rem;
+        padding: 0 20px;
+    }
+
+    .overlayButtonsRow {
+        margin-top: 5px !important;
+        gap: 20px !important;
+        /* Wider spacing for landscape buttons */
+    }
+
+    /* Start Screen Landscape Tweaks */
+    .startContent {
+        padding: 0 !important;
+        gap: 10px !important;
+    }
+
+    .startTitle {
+        font-size: 2rem !important;
+    }
+
+    .startButton {
+        font-size: 1.2rem;
+        padding: 0.5rem 2rem;
+        margin-top: 5px;
     }
 }
