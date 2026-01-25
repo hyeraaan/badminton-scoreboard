@@ -19,23 +19,43 @@ export default function ScoreBoard() {
         setIsMounted(true);
         // Listen for fullscreen change events to sync state
         const handleFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement);
+            setIsFullscreen(!!document.fullscreenElement || !!(document as any).webkitFullscreenElement);
         };
         document.addEventListener("fullscreenchange", handleFullscreenChange);
-        return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener("fullscreenchange", handleFullscreenChange);
+            document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+        };
     }, []);
 
     const toggleFullscreen = async () => {
-        if (!document.fullscreenElement) {
-            try {
-                await document.documentElement.requestFullscreen();
-            } catch (err) {
-                console.error("Error attempting to enable fullscreen:", err);
+        try {
+            const doc = document as any;
+            const docEl = document.documentElement as any;
+
+            const requestFullScreen = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
+            const exitFullScreen = document.exitFullscreen || doc.webkitExitFullscreen;
+
+            if (!requestFullScreen) {
+                // API not supported (e.g. iPhone Safari)
+                alert(state.language === 'ko'
+                    ? "이 기기에서는 전체 화면 모드를 지원하지 않습니다.\n브라우저 메뉴의 '홈 화면에 추가'를 이용해 주세요."
+                    : "Fullscreen mode is not supported on this device.\nPlease use 'Add to Home Screen' from browser menu.");
+                return;
             }
-        } else {
-            if (document.exitFullscreen) {
-                await document.exitFullscreen();
+
+            if (!document.fullscreenElement && !doc.webkitFullscreenElement) {
+                await requestFullScreen.call(docEl);
+            } else {
+                if (exitFullScreen) {
+                    await exitFullScreen.call(document);
+                }
             }
+        } catch (err) {
+            console.log("Fullscreen toggle ignored:", err);
+            // Ignore benign errors (e.g. user cancelled)
         }
     };
 
@@ -170,7 +190,7 @@ export default function ScoreBoard() {
                     >
                         <Settings style={iconStyle} strokeWidth={2} />
                         <span style={{ fontSize: '0.8rem', marginLeft: '5px' }}>
-                            {state.scoresMode === 'bwf' ? "BWF" : "Simple"}
+                            {state.scoresMode === 'bwf' ? "BWF RULE" : "SIMPLE RULE"}
                         </span>
                     </button>
                     <button
@@ -291,7 +311,7 @@ export default function ScoreBoard() {
                 <div className={styles.helpOverlay} onClick={() => setShowHelp(false)}>
                     <div className={styles.helpItem} style={{ top: '80px', right: '20px', alignItems: 'flex-end', textAlign: 'right' }}>
                         <div className={styles.helpText}>
-                            {state.language === 'ko' ? '도움말 / 설정 / 언어' : 'Help / Settings / Language'}
+                            {state.language === 'ko' ? '도움말 / 전체 화면 / 설정 / 언어' : 'Help / Fullscreen / Settings / Language'}
                         </div>
                         <div className={styles.helpArrow}>↑</div>
                     </div>

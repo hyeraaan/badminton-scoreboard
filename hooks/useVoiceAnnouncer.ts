@@ -39,7 +39,7 @@ export function useVoiceAnnouncer(state: GameState) {
         utterance.onstart = () => console.log(`[TTS] Playing: "${text}"`);
         utterance.onend = () => console.log(`[TTS] Success: Finished.`);
         utterance.onerror = (e) => {
-            if (e.error === 'canceled') return;
+            if (e.error === 'canceled' || e.error === 'interrupted') return;
             console.error(`[TTS] Error: "${e.error}"`);
         };
 
