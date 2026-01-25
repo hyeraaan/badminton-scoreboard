@@ -8,6 +8,22 @@ import styles from "./ScoreBoard.module.css";
 import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, MinusCircle, Download, Search, Maximize, Minimize } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
+// Extend native types to support vendor prefixes
+interface DocumentWithFullscreen extends Document {
+    mozFullScreenElement?: Element;
+    msFullscreenElement?: Element;
+    webkitFullscreenElement?: Element;
+    mozCancelFullScreen?: () => void;
+    msExitFullscreen?: () => void;
+    webkitExitFullscreen?: () => void;
+}
+
+interface HTMLElementWithFullscreen extends HTMLElement {
+    mozRequestFullScreen?: () => Promise<void>;
+    msRequestFullscreen?: () => Promise<void>;
+    webkitRequestFullscreen?: () => Promise<void>;
+}
+
 export default function ScoreBoard() {
     const { state, incrementScore, resetGame, undo, setPlayerName, setLanguage, setScoresMode, decrementScore, nextSet, startMatch } = useGameLogic();
     const { isMuted, toggleMute, speak, getScoreAnnouncement } = useVoiceAnnouncer(state);
@@ -19,7 +35,8 @@ export default function ScoreBoard() {
         setIsMounted(true);
         // Listen for fullscreen change events to sync state
         const handleFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement || !!(document as any).webkitFullscreenElement);
+            const doc = document as DocumentWithFullscreen;
+            setIsFullscreen(!!doc.fullscreenElement || !!doc.webkitFullscreenElement);
         };
         document.addEventListener("fullscreenchange", handleFullscreenChange);
         document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
@@ -32,11 +49,11 @@ export default function ScoreBoard() {
 
     const toggleFullscreen = async () => {
         try {
-            const doc = document as any;
-            const docEl = document.documentElement as any;
+            const doc = document as DocumentWithFullscreen;
+            const docEl = document.documentElement as HTMLElementWithFullscreen;
 
             const requestFullScreen = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
-            const exitFullScreen = document.exitFullscreen || doc.webkitExitFullscreen;
+            const exitFullScreen = doc.exitFullscreen || doc.webkitExitFullscreen;
 
             if (!requestFullScreen) {
                 // API not supported (e.g. iPhone Safari)
@@ -46,11 +63,11 @@ export default function ScoreBoard() {
                 return;
             }
 
-            if (!document.fullscreenElement && !doc.webkitFullscreenElement) {
+            if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
                 await requestFullScreen.call(docEl);
             } else {
                 if (exitFullScreen) {
-                    await exitFullScreen.call(document);
+                    await exitFullScreen.call(doc);
                 }
             }
         } catch (err) {
