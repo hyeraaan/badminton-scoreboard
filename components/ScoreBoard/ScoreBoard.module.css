@@ -246,12 +246,18 @@
 }
 
 .editIcon {
-    opacity: 0.6;
-    transition: opacity 0.2s;
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
 }
 
 .playerName:hover .editIcon {
-    opacity: 1;
+    opacity: 0.8;
+}
+
+.editIcon:hover {
+    opacity: 1 !important;
 }
 
 .score {

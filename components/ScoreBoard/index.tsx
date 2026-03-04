@@ -263,7 +263,7 @@ export default function ScoreBoard() {
                         title={state.language === 'ko' ? "이름 수정" : "Click to edit name"}
                         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                     >
-                        {state.playerNames.player1} <Pencil size={14} className={styles.editIcon} />
+                        {state.playerNames.player1} <Pencil size={20} className={styles.editIcon} />
                     </div>
                     <div className={styles.score}>{state.scores.player1}</div>
 
@@ -307,7 +307,7 @@ export default function ScoreBoard() {
                         title={state.language === 'ko' ? "이름 수정" : "Click to edit name"}
                         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                     >
-                        {state.playerNames.player2} <Pencil size={14} className={styles.editIcon} />
+                        {state.playerNames.player2} <Pencil size={20} className={styles.editIcon} />
                     </div>
                     <div className={styles.score}>{state.scores.player2}</div>
 
