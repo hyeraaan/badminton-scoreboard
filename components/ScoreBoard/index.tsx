@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, MinusCircle, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 // Extend native types to support vendor prefixes
@@ -273,7 +273,10 @@ export default function ScoreBoard() {
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
                         style={{ zIndex: 5 }} // Ensure accessible
                     >
-                        <Minus size={24} strokeWidth={3} color={state.theme === 'retro' ? "#000000" : undefined} />
+                        {state.theme === 'retro'
+                            ? <MinusCircle size={28} color="#000000" />
+                            : <Minus size={24} strokeWidth={3} />
+                        }
                     </button>
 
                     {state.sets.player1 > 0 && (
@@ -314,7 +317,10 @@ export default function ScoreBoard() {
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
                         style={{ zIndex: 5 }}
                     >
-                        <Minus size={24} strokeWidth={3} color={state.theme === 'retro' ? "#000000" : undefined} />
+                        {state.theme === 'retro'
+                            ? <MinusCircle size={28} color="#000000" />
+                            : <Minus size={24} strokeWidth={3} />
+                        }
                     </button>
 
                     {state.sets.player2 > 0 && (

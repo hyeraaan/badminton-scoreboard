@@ -124,14 +124,18 @@
     border-radius: 0 !important;
 }
 
-/* 레트로 마이너스 버튼 테두리 제거 및 위치 조정 */
+/* 레트로 마이너스 버튼 아이콘 최적화 및 위치 고정 */
 .retroNes .decrementButton {
     border: none !important;
     background: transparent !important;
     border-radius: 0 !important;
+    /* 아이콘 자체가 원형이므로 버튼은 투명하게 */
     bottom: 20px !important;
     right: 20px !important;
     margin-top: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
 }
 
 /* 레트로 승리 세트 아이콘용 배경 및 테두리 제거 */
