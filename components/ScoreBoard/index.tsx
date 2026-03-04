@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, HandCoins } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 // Extend native types to support vendor prefixes
@@ -253,7 +253,10 @@ export default function ScoreBoard() {
                 >
                     {state.server === "player1" && (
                         <div className={`${styles.serverIndicator} ${state.theme === 'retro' ? 'nes-badge' : ''}`}>
-                            <span className={state.theme === 'retro' ? 'is-error' : ''}>{t.serving}</span>
+                            <span className={state.theme === 'retro' ? 'is-error' : ''} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <HandCoins size={state.theme === 'retro' ? 14 : 16} />
+                                {state.theme !== 'retro' && t.serving}
+                            </span>
                         </div>
                     )}
                     <div
@@ -291,7 +294,10 @@ export default function ScoreBoard() {
                 >
                     {state.server === "player2" && (
                         <div className={`${styles.serverIndicator} ${state.theme === 'retro' ? 'nes-badge' : ''}`}>
-                            <span className={state.theme === 'retro' ? 'is-error' : ''}>{t.serving}</span>
+                            <span className={state.theme === 'retro' ? 'is-error' : ''} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <HandCoins size={state.theme === 'retro' ? 14 : 16} />
+                                {state.theme !== 'retro' && t.serving}
+                            </span>
                         </div>
                     )}
                     <div
