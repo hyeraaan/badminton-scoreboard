@@ -276,10 +276,10 @@ export default function ScoreBoard() {
                     </button>
 
                     {state.sets.player1 > 0 && (
-                        <div className={styles.setsContainer}>
+                        <div className={state.theme === 'retro' ? '' : styles.setsContainer} style={state.theme === 'retro' ? { display: 'flex', gap: '8px', marginTop: '1rem' } : undefined}>
                             {Array.from({ length: state.sets.player1 }).map((_, i) => (
                                 state.theme === 'retro'
-                                    ? <i key={i} className="nes-icon trophy is-large"></i>
+                                    ? <i key={i} className="nes-icon trophy is-medium"></i>
                                     : <Award key={i} size={24} color="#ffd700" />
                             ))}
                         </div>
@@ -316,10 +316,10 @@ export default function ScoreBoard() {
                     </button>
 
                     {state.sets.player2 > 0 && (
-                        <div className={styles.setsContainer}>
+                        <div className={state.theme === 'retro' ? '' : styles.setsContainer} style={state.theme === 'retro' ? { display: 'flex', gap: '8px', marginTop: '1rem' } : undefined}>
                             {Array.from({ length: state.sets.player2 }).map((_, i) => (
                                 state.theme === 'retro'
-                                    ? <i key={i} className="nes-icon trophy is-large"></i>
+                                    ? <i key={i} className="nes-icon trophy is-medium"></i>
                                     : <Award key={i} size={24} color="#ffd700" />
                             ))}
                         </div>
@@ -407,14 +407,14 @@ export default function ScoreBoard() {
                             <div className={styles.overlayContent}>
                                 <div className={styles.overlayHeaderRow}>
                                     {state.theme === 'retro'
-                                        ? <i className="nes-icon trophy is-large"></i>
+                                        ? <i className="nes-icon trophy is-medium"></i>
                                         : <Award size={48} className="text-primary" />
                                     }
                                     <h2 className={styles.overlayTitle}>
                                         {state.setWinner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
                                     </h2>
                                     {state.theme === 'retro'
-                                        ? <i className="nes-icon trophy is-large"></i>
+                                        ? <i className="nes-icon trophy is-medium"></i>
                                         : <Award size={48} className="text-primary" />
                                     }
                                 </div>
@@ -444,14 +444,14 @@ export default function ScoreBoard() {
                             <div ref={resultRef} className={styles.overlayContent}>
                                 <div className={styles.overlayHeaderRow}>
                                     {state.theme === 'retro'
-                                        ? <i className="nes-icon trophy is-large"></i>
+                                        ? <i className="nes-icon trophy is-medium"></i>
                                         : <Award size={64} className="text-primary" />
                                     }
                                     <h1 className={styles.overlayTitle}>
                                         {state.winner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
                                     </h1>
                                     {state.theme === 'retro'
-                                        ? <i className="nes-icon trophy is-large"></i>
+                                        ? <i className="nes-icon trophy is-medium"></i>
                                         : <Award size={64} className="text-primary" />
                                     }
                                 </div>
@@ -470,7 +470,7 @@ export default function ScoreBoard() {
                                                 <span className={`${styles.setScoreName} ${p1Won ? styles.setWinnerName : ''}`}>
                                                     {p1Won && (
                                                         state.theme === 'retro'
-                                                            ? <i className="nes-icon trophy is-large" style={{ marginRight: '8px', transform: 'scale(0.6)', transformOrigin: 'center' }}></i>
+                                                            ? <i className="nes-icon trophy is-medium" style={{ marginRight: '8px' }}></i>
                                                             : <Award size={20} />
                                                     )}
                                                     {setScore.player1}
@@ -480,7 +480,7 @@ export default function ScoreBoard() {
                                                     {setScore.player2}
                                                     {p2Won && (
                                                         state.theme === 'retro'
-                                                            ? <i className="nes-icon trophy is-large" style={{ marginLeft: '8px', transform: 'scale(0.6)', transformOrigin: 'center' }}></i>
+                                                            ? <i className="nes-icon trophy is-medium" style={{ marginLeft: '8px' }}></i>
                                                             : <Award size={20} />
                                                     )}
                                                 </span>
