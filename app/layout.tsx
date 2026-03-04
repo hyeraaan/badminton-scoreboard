@@ -15,7 +15,7 @@ const pressStart2P = Press_Start_2P({
 });
 
 export const metadata: Metadata = {
-  title: "Badminton Scoreboard",
+  title: "BADMINTON SCOREBOARD",
   description: "Professional Badminton Scoreboard PWA",
   manifest: "/manifest.json",
 };

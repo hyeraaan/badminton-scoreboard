@@ -159,7 +159,7 @@ export default function ScoreBoard() {
     if (!isMounted) return null;
 
     const t = {
-        title: state.language === 'ko' ? "배드민턴 점수판" : "Badminton Scoreboard",
+        title: state.language === 'ko' ? "배드민턴 점수판" : "BADMINTON SCOREBOARD",
         set: state.language === 'ko' ? "세트" : "SET",
         serving: state.language === 'ko' ? "서브" : "SERVING",
         wins: state.language === 'ko' ? "승리!" : "Wins!",
