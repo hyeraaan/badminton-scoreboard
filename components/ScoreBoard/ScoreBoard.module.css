@@ -116,6 +116,13 @@
     border-image-repeat: stretch !important;
 }
 
+/* 레트로 서빙 뱃지 스타일 충돌 해결 (기본 그림자/테두리 제거) */
+.retroNes .serverIndicator {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
 /* 레트로 마이너스 버튼 테두리 제거 */
 .retroNes .decrementButton {
     border: none !important;
