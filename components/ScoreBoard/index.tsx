@@ -227,7 +227,7 @@ export default function ScoreBoard() {
                     </button>
                     <button
                         onClick={() => setLanguage(state.language === 'ko' ? 'en' : 'ko')}
-                        className={state.theme === 'retro' ? `nes-btn` : styles.iconButton}
+                        className={state.theme === 'retro' ? `nes-btn ${styles.retroHeaderBtn}` : styles.iconButton}
                         style={state.theme === 'retro' ? { display: 'flex', gap: '6px', alignItems: 'center', padding: '4px 8px', fontSize: '10px', height: '36px' } : undefined}
                         title={state.language === 'ko' ? "Switch to English" : "한국어로 변경"}
                     >
@@ -237,8 +237,8 @@ export default function ScoreBoard() {
                         </span>
                     </button>
                     <div
-                        className={state.theme === 'retro' ? `nes-btn` : styles.setIndicator}
-                        style={state.theme === 'retro' ? { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 12px', fontSize: '10px', height: '36px', marginLeft: 'auto', cursor: 'default' } : undefined}
+                        className={state.theme === 'retro' ? `nes-btn ${styles.retroHeaderBtn}` : styles.setIndicator}
+                        style={state.theme === 'retro' ? { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px', fontSize: '10px', height: '36px', marginLeft: 'auto', cursor: 'default' } : undefined}
                     >
                         {t.set} {state.currentSet}
                     </div>
