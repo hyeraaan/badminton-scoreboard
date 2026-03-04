@@ -279,7 +279,7 @@ export default function ScoreBoard() {
                         <div className={styles.setsContainer}>
                             {Array.from({ length: state.sets.player1 }).map((_, i) => (
                                 state.theme === 'retro'
-                                    ? <i key={i} className="nes-icon trophy is-small" style={{ filter: 'brightness(0)' }}></i>
+                                    ? <i key={i} className="nes-icon trophy is-large" style={{ filter: 'brightness(0)' }}></i>
                                     : <Award key={i} size={24} color="#ffd700" />
                             ))}
                         </div>
@@ -319,7 +319,7 @@ export default function ScoreBoard() {
                         <div className={styles.setsContainer}>
                             {Array.from({ length: state.sets.player2 }).map((_, i) => (
                                 state.theme === 'retro'
-                                    ? <i key={i} className="nes-icon trophy is-small" style={{ filter: 'brightness(0)' }}></i>
+                                    ? <i key={i} className="nes-icon trophy is-large" style={{ filter: 'brightness(0)' }}></i>
                                     : <Award key={i} size={24} color="#ffd700" />
                             ))}
                         </div>
@@ -470,7 +470,7 @@ export default function ScoreBoard() {
                                                 <span className={`${styles.setScoreName} ${p1Won ? styles.setWinnerName : ''}`}>
                                                     {p1Won && (
                                                         state.theme === 'retro'
-                                                            ? <i className="nes-icon trophy is-small" style={{ filter: 'brightness(0)', marginRight: '8px' }}></i>
+                                                            ? <i className="nes-icon trophy is-large" style={{ filter: 'brightness(0)', marginRight: '8px', transform: 'scale(0.6)', transformOrigin: 'center' }}></i>
                                                             : <Award size={20} />
                                                     )}
                                                     {setScore.player1}
@@ -480,7 +480,7 @@ export default function ScoreBoard() {
                                                     {setScore.player2}
                                                     {p2Won && (
                                                         state.theme === 'retro'
-                                                            ? <i className="nes-icon trophy is-small" style={{ filter: 'brightness(0)', marginLeft: '8px' }}></i>
+                                                            ? <i className="nes-icon trophy is-large" style={{ filter: 'brightness(0)', marginLeft: '8px', transform: 'scale(0.6)', transformOrigin: 'center' }}></i>
                                                             : <Award size={20} />
                                                     )}
                                                 </span>
