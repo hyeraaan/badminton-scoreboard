@@ -273,10 +273,7 @@ export default function ScoreBoard() {
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
                         style={{ zIndex: 5 }} // Ensure accessible
                     >
-                        {state.theme === 'retro'
-                            ? <MinusCircle size={28} color="#000000" />
-                            : <Minus size={24} strokeWidth={3} />
-                        }
+                        <Minus size={state.theme === 'retro' ? 28 : 24} strokeWidth={3} color={state.theme === 'retro' ? "#000000" : undefined} />
                     </button>
 
                     {state.sets.player1 > 0 && (
@@ -317,10 +314,7 @@ export default function ScoreBoard() {
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
                         style={{ zIndex: 5 }}
                     >
-                        {state.theme === 'retro'
-                            ? <MinusCircle size={28} color="#000000" />
-                            : <Minus size={24} strokeWidth={3} />
-                        }
+                        <Minus size={state.theme === 'retro' ? 28 : 24} strokeWidth={3} color={state.theme === 'retro' ? "#000000" : undefined} />
                     </button>
 
                     {state.sets.player2 > 0 && (
