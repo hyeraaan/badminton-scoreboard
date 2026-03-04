@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, MinusCircle, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, MinusCircle, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil, Play } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 // Extend native types to support vendor prefixes
@@ -522,9 +522,13 @@ export default function ScoreBoard() {
                                 if (!isMuted) speak(state.language === 'ko' ? "경기를 시작합니다" : "Match Start");
                                 startMatch();
                             }}
-                            className={styles.startButton}
+                            className={state.theme === 'retro' ? `nes-btn` : styles.iconButton}
+                            style={state.theme === 'retro' ? { display: 'flex', gap: '8px', alignItems: 'center', padding: '8px 16px', fontSize: '14px' } : { padding: '10px 20px', fontSize: '1rem' }}
                         >
-                            {t.startMatch}
+                            <Play fill="currentColor" style={state.theme === 'retro' ? { width: '16px', height: '16px' } : { width: '20px', height: '20px' }} />
+                            <span style={state.theme === 'retro' ? {} : { marginLeft: '8px' }}>
+                                {t.startMatch}
+                            </span>
                         </button>
 
                     </div>
