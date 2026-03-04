@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 // Extend native types to support vendor prefixes
@@ -261,8 +261,9 @@ export default function ScoreBoard() {
                         onClick={(e) => handleNameClick("player1", e)}
                         role="button"
                         title={state.language === 'ko' ? "이름 수정" : "Click to edit name"}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                     >
-                        {state.playerNames.player1} ✎
+                        {state.playerNames.player1} <Pencil size={14} className={styles.editIcon} />
                     </div>
                     <div className={styles.score}>{state.scores.player1}</div>
 
@@ -301,8 +302,9 @@ export default function ScoreBoard() {
                         onClick={(e) => handleNameClick("player2", e)}
                         role="button"
                         title={state.language === 'ko' ? "이름 수정" : "Click to edit name"}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                     >
-                        {state.playerNames.player2} ✎
+                        {state.playerNames.player2} <Pencil size={14} className={styles.editIcon} />
                     </div>
                     <div className={styles.score}>{state.scores.player2}</div>
 
