@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, MinusCircle, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil, Play, ChevronRight } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil, Play, ChevronRight } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 // Extend native types to support vendor prefixes
