@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, MinusCircle, Download, Search, Maximize, Minimize } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 // Extend native types to support vendor prefixes
@@ -25,7 +25,7 @@ interface HTMLElementWithFullscreen extends HTMLElement {
 }
 
 export default function ScoreBoard() {
-    const { state, incrementScore, resetGame, undo, setPlayerName, setLanguage, setScoresMode, decrementScore, nextSet, startMatch } = useGameLogic();
+    const { state, incrementScore, resetGame, undo, setPlayerName, setLanguage, setScoresMode, setTheme, decrementScore, nextSet, startMatch } = useGameLogic();
     const { isMuted, toggleMute, speak, getScoreAnnouncement } = useVoiceAnnouncer(state);
     const [isMounted, setIsMounted] = React.useState(false);
     const [showHelp, setShowHelp] = React.useState(false);
@@ -159,7 +159,7 @@ export default function ScoreBoard() {
     if (!isMounted) return null;
 
     const t = {
-        title: state.language === 'ko' ? "배드민턴 점수판" : "Badminton Match",
+        title: state.language === 'ko' ? "배드민턴 점수판" : "Badminton Scoreboard",
         set: state.language === 'ko' ? "세트" : "Set",
         serving: state.language === 'ko' ? "서브" : "SERVING",
         wins: state.language === 'ko' ? "승리!" : "Wins!",
@@ -174,6 +174,7 @@ export default function ScoreBoard() {
         nextSet: state.language === 'ko' ? "다음 세트 시작" : "Start Next Set",
         setWinner: state.language === 'ko' ? "세트 승리!" : "Set Won!",
         startMatch: state.language === 'ko' ? "경기 시작" : "Match Start",
+        theme: state.language === 'ko' ? "테마" : "Theme",
     };
 
     const iconStyle = { width: '20px', height: '20px' };
@@ -181,57 +182,79 @@ export default function ScoreBoard() {
 
 
     return (
-        <div className={styles.boardContainer}>
-            <header className={styles.header}>
+        <div className={`${styles.boardContainer} ${state.theme === 'retro' ? styles.retroNes : ''}`}>
+            <header className={`${styles.header}`}>
                 <div className={styles.title}>{t.title}</div>
 
                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <button
                         onClick={() => setShowHelp(true)}
-                        className={styles.helpButton}
+                        className={state.theme === 'retro' ? `nes-btn ${styles.retroHeaderBtn}` : styles.helpButton}
+                        style={state.theme === 'retro' ? { width: '36px', height: '36px', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' } : undefined}
                         title="Help"
                     >
-                        <Search strokeWidth={2} size={18} />
+                        <CircleHelp strokeWidth={2} size={state.theme === 'retro' ? 16 : 18} />
                     </button>
                     <button
                         onClick={toggleFullscreen}
-                        className={styles.iconButton}
+                        className={state.theme === 'retro' ? `nes-btn ${styles.retroHeaderBtn}` : styles.iconButton}
+                        style={state.theme === 'retro' ? { width: '36px', height: '36px', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' } : undefined}
                         title={state.language === 'ko' ? "전체 화면" : "Toggle Fullscreen"}
                     >
-                        {isFullscreen ? <Minimize strokeWidth={2} size={18} /> : <Maximize strokeWidth={2} size={18} />}
+                        {isFullscreen ? <Minimize strokeWidth={2} size={state.theme === 'retro' ? 16 : 18} /> : <Maximize strokeWidth={2} size={state.theme === 'retro' ? 16 : 18} />}
                     </button>
                     <button
                         onClick={() => setScoresMode(state.scoresMode === 'bwf' ? 'simple' : 'bwf')}
-                        className={`${styles.iconButton} ${state.scoresMode === 'bwf' ? styles.activeBwf : ''}`}
+                        className={state.theme === 'retro' ? `nes-btn` : `${styles.iconButton} ${state.scoresMode === 'bwf' ? styles.activeBwf : ''}`}
+                        style={state.theme === 'retro' ? { display: 'flex', gap: '6px', alignItems: 'center', padding: '4px 8px', fontSize: '10px', height: '36px' } : undefined}
                         title={state.scoresMode === 'bwf' ? "BWF Rules" : "Simple Rules"}
                     >
-                        <Settings style={iconStyle} strokeWidth={2} />
-                        <span style={{ fontSize: '0.8rem', marginLeft: '5px' }}>
-                            {state.scoresMode === 'bwf' ? "BWF RULE" : "SIMPLE RULE"}
+                        <Settings style={state.theme === 'retro' ? { width: '16px', height: '16px' } : iconStyle} strokeWidth={2} />
+                        <span style={state.theme === 'retro' ? {} : { fontSize: '0.8rem', marginLeft: '5px' }}>
+                            {state.scoresMode === 'bwf' ? "BWF" : "SIMPLE"}
+                        </span>
+                    </button>
+                    <button
+                        onClick={() => setTheme(state.theme === 'classic' ? 'retro' : 'classic')}
+                        className={state.theme === 'retro' ? `nes-btn` : styles.iconButton}
+                        style={state.theme === 'retro' ? { display: 'flex', gap: '6px', alignItems: 'center', padding: '4px 8px', fontSize: '10px', height: '36px' } : undefined}
+                        title={state.theme === 'classic' ? "Retro Mode" : "Classic Mode"}
+                    >
+                        <Gamepad2 style={state.theme === 'retro' ? { width: '16px', height: '16px' } : iconStyle} strokeWidth={2} />
+                        <span style={state.theme === 'retro' ? {} : { fontSize: '0.8rem', marginLeft: '5px' }}>
+                            {state.theme === 'classic' ? "CLASSIC" : "RETRO"}
                         </span>
                     </button>
                     <button
                         onClick={() => setLanguage(state.language === 'ko' ? 'en' : 'ko')}
-                        className={styles.iconButton}
+                        className={state.theme === 'retro' ? `nes-btn` : styles.iconButton}
+                        style={state.theme === 'retro' ? { display: 'flex', gap: '6px', alignItems: 'center', padding: '4px 8px', fontSize: '10px', height: '36px' } : undefined}
                         title={state.language === 'ko' ? "Switch to English" : "한국어로 변경"}
                     >
-                        <Globe style={iconStyle} />
-                        <span style={{ fontSize: '0.8rem', marginLeft: '5px' }}>
+                        <Globe style={state.theme === 'retro' ? { width: '16px', height: '16px' } : iconStyle} />
+                        <span style={state.theme === 'retro' ? {} : { fontSize: '0.8rem', marginLeft: '5px' }}>
                             {state.language === 'ko' ? "KO" : "EN"}
                         </span>
                     </button>
-                    <div className={styles.setIndicator}>{t.set} {state.currentSet}</div>
+                    <div
+                        className={state.theme === 'retro' ? `nes-btn` : styles.setIndicator}
+                        style={state.theme === 'retro' ? { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 12px', fontSize: '10px', height: '36px', marginLeft: 'auto', cursor: 'default' } : undefined}
+                    >
+                        {t.set} {state.currentSet}
+                    </div>
                 </div>
             </header>
 
             <div className={styles.scoresArea}>
                 {/* Player 1 Section */}
                 <div
-                    className={`${styles.playerSection} ${styles.player1}`}
+                    className={`${styles.playerSection} ${styles.player1} ${state.theme === 'retro' ? 'is-centered' : ''}`}
                     onClick={() => handleScore("player1")}
                 >
                     {state.server === "player1" && (
-                        <div className={styles.serverIndicator}>{t.serving}</div>
+                        <div className={`${styles.serverIndicator} ${state.theme === 'retro' ? 'nes-badge' : ''}`}>
+                            <span className={state.theme === 'retro' ? 'is-error' : ''}>{t.serving}</span>
+                        </div>
                     )}
                     <div
                         className={styles.playerName}
@@ -249,23 +272,27 @@ export default function ScoreBoard() {
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
                         style={{ zIndex: 5 }} // Ensure accessible
                     >
-                        <MinusCircle size={24} strokeWidth={2} />
+                        <Minus size={24} strokeWidth={3} color={state.theme === 'retro' ? "#000000" : undefined} />
                     </button>
 
-                    <div className={styles.setsContainer}>
-                        {Array.from({ length: state.sets.player1 }).map((_, i) => (
-                            <BadmintonCock key={i} size={24} color="#ffd700" />
-                        ))}
-                    </div>
+                    {state.sets.player1 > 0 && (
+                        <div className={styles.setsContainer}>
+                            {Array.from({ length: state.sets.player1 }).map((_, i) => (
+                                <Award key={i} size={24} color={state.theme === 'retro' ? "#000000" : "#ffd700"} />
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Player 2 Section */}
                 <div
-                    className={`${styles.playerSection} ${styles.player2}`}
+                    className={`${styles.playerSection} ${styles.player2} ${state.theme === 'retro' ? 'is-centered' : ''}`}
                     onClick={() => handleScore("player2")}
                 >
                     {state.server === "player2" && (
-                        <div className={styles.serverIndicator}>{t.serving}</div>
+                        <div className={`${styles.serverIndicator} ${state.theme === 'retro' ? 'nes-badge' : ''}`}>
+                            <span className={state.theme === 'retro' ? 'is-error' : ''}>{t.serving}</span>
+                        </div>
                     )}
                     <div
                         className={styles.playerName}
@@ -283,14 +310,16 @@ export default function ScoreBoard() {
                         title={state.language === 'ko' ? "점수 취소 (Undo)" : "Undo Point"}
                         style={{ zIndex: 5 }}
                     >
-                        <MinusCircle size={24} strokeWidth={2} />
+                        <Minus size={24} strokeWidth={3} color={state.theme === 'retro' ? "#000000" : undefined} />
                     </button>
 
-                    <div className={styles.setsContainer}>
-                        {Array.from({ length: state.sets.player2 }).map((_, i) => (
-                            <BadmintonCock key={i} size={24} />
-                        ))}
-                    </div>
+                    {state.sets.player2 > 0 && (
+                        <div className={styles.setsContainer}>
+                            {Array.from({ length: state.sets.player2 }).map((_, i) => (
+                                <Award key={i} size={24} color={state.theme === 'retro' ? "#000000" : "#ffd700"} />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -306,18 +335,30 @@ export default function ScoreBoard() {
                         }
                         toggleMute();
                     }}
-                    className={styles.controlButton}
+                    className={state.theme === 'retro' ? `nes-btn ${styles.retroHeaderBtn}` : styles.controlButton}
+                    style={state.theme === 'retro' ? { width: '48px', height: '48px', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 8px' } : undefined}
                     title="Mute/Unmute"
                 >
-                    {isMuted ? <VolumeX strokeWidth={2} /> : <Volume2 strokeWidth={2} />}
+                    {isMuted ? <VolumeX strokeWidth={2} size={state.theme === 'retro' ? 20 : 24} /> : <Volume2 strokeWidth={2} size={state.theme === 'retro' ? 20 : 24} />}
                 </button>
-                <button onClick={undo} className={styles.controlButton} title="Undo">
-                    <Undo2 strokeWidth={2} />
+                <button
+                    onClick={undo}
+                    className={state.theme === 'retro' ? `nes-btn ${styles.retroHeaderBtn}` : styles.controlButton}
+                    style={state.theme === 'retro' ? { width: '48px', height: '48px', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 8px' } : undefined}
+                    title="Undo"
+                >
+                    <Undo2 strokeWidth={2} size={state.theme === 'retro' ? 20 : 24} />
                 </button>
-                <button onClick={resetGame} className={styles.controlButton} title="Reset">
-                    <RefreshCw strokeWidth={2} />
+                <button
+                    onClick={resetGame}
+                    className={state.theme === 'retro' ? `nes-btn ${styles.retroHeaderBtn}` : styles.controlButton}
+                    style={state.theme === 'retro' ? { width: '48px', height: '48px', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 8px' } : undefined}
+                    title="Reset"
+                >
+                    <RefreshCw strokeWidth={2} size={state.theme === 'retro' ? 20 : 24} />
                 </button>
             </div>
+
 
             <footer className={styles.footer}>
                 <p>© 2026 hyeraaan</p>
@@ -361,11 +402,11 @@ export default function ScoreBoard() {
                             {/* Set Result Content */}
                             <div className={styles.overlayContent}>
                                 <div className={styles.overlayHeaderRow}>
-                                    <BadmintonCock size={48} className="text-primary" />
+                                    <Award size={48} className="text-primary" color={state.theme === 'retro' ? "#000000" : undefined} />
                                     <h2 className={styles.overlayTitle}>
                                         {state.setWinner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
                                     </h2>
-                                    <BadmintonCock size={48} className="text-primary" />
+                                    <Award size={48} className="text-primary" color={state.theme === 'retro' ? "#000000" : undefined} />
                                 </div>
                                 <div className={styles.overlaySubtitle}>{t.setWinner}</div>
 
@@ -392,11 +433,11 @@ export default function ScoreBoard() {
                             {/* Game Result Content */}
                             <div ref={resultRef} className={styles.overlayContent}>
                                 <div className={styles.overlayHeaderRow}>
-                                    <BadmintonCock size={64} className="text-primary" />
+                                    <Award size={64} className="text-primary" color={state.theme === 'retro' ? "#000000" : undefined} />
                                     <h1 className={styles.overlayTitle}>
                                         {state.winner === "player1" ? state.playerNames.player1 : state.playerNames.player2}
                                     </h1>
-                                    <BadmintonCock size={64} className="text-primary" />
+                                    <Award size={64} className="text-primary" color={state.theme === 'retro' ? "#000000" : undefined} />
                                 </div>
                                 <h2 className={styles.overlaySubtitle}>{t.wins}</h2>
 
@@ -411,13 +452,13 @@ export default function ScoreBoard() {
                                         return (
                                             <div key={index} className={styles.setScoreItem}>
                                                 <span className={`${styles.setScoreName} ${p1Won ? styles.setWinnerName : ''}`}>
-                                                    {p1Won && <BadmintonCock size={20} />}
+                                                    {p1Won && <Award size={20} color={state.theme === 'retro' ? "#000000" : undefined} />}
                                                     {setScore.player1}
                                                 </span>
                                                 <span className={styles.setLabel}>Set {index + 1}</span>
                                                 <span className={`${styles.setScoreName} ${p2Won ? styles.setWinnerName : ''}`}>
                                                     {setScore.player2}
-                                                    {p2Won && <BadmintonCock size={20} />}
+                                                    {p2Won && <Award size={20} color={state.theme === 'retro' ? "#000000" : undefined} />}
                                                 </span>
                                             </div>
                                         );

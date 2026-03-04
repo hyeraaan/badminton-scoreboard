@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { GameState } from './useGameLogic';
 
 export function useVoiceAnnouncer(state: GameState) {
-    const [isMuted, setIsMuted] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
 
     const speak = useCallback((text: string) => {
         if (isMuted) return;

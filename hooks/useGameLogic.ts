@@ -25,6 +25,7 @@ export interface GameState {
     isMatchStarted: boolean;
     language: "ko" | "en";
     scoresMode: "bwf" | "simple";
+    theme: "classic" | "retro";
     history: GameState[];
 }
 
@@ -39,6 +40,7 @@ type Action =
     | { type: "START_MATCH" }
     | { type: "SET_LANGUAGE"; language: "ko" | "en" }
     | { type: "SET_SCORES_MODE"; mode: "bwf" | "simple" }
+    | { type: "SET_THEME"; theme: "classic" | "retro" }
     | { type: "LOAD_GAME"; state: GameState };
 
 const MAX_POINTS = 21;
@@ -58,6 +60,7 @@ const initialState: GameState = {
     isMatchStarted: false,
     language: "ko",
     scoresMode: "bwf",
+    theme: "retro",
     history: [],
 };
 
@@ -156,6 +159,7 @@ function gameReducer(state: GameState, action: Action): GameState {
                 ...previousState,
                 language: state.language,
                 scoresMode: state.scoresMode,
+                theme: state.theme,
                 playerNames: state.playerNames,
                 history: newHistory
             };
@@ -177,6 +181,7 @@ function gameReducer(state: GameState, action: Action): GameState {
                     ...previousState,
                     language: state.language,
                     scoresMode: state.scoresMode,
+                    theme: state.theme,
                     playerNames: state.playerNames,
                     history: newHistory
                 };
@@ -204,6 +209,7 @@ function gameReducer(state: GameState, action: Action): GameState {
                 ...initialState,
                 language: state.language,
                 scoresMode: state.scoresMode,
+                theme: state.theme,
                 playerNames: state.playerNames,
                 history: [] // Clear history on full reset
             };
@@ -223,13 +229,16 @@ function gameReducer(state: GameState, action: Action): GameState {
             return { ...state, language: action.language };
         case "SET_SCORES_MODE":
             return { ...state, scoresMode: action.mode };
+        case "SET_THEME":
+            return { ...state, theme: action.theme };
         case "LOAD_GAME":
             return {
                 ...initialState,
                 ...action.state,
                 playerNames: { ...initialState.playerNames, ...action.state?.playerNames },
                 language: action.state?.language || initialState.language,
-                scoresMode: action.state?.scoresMode || initialState.scoresMode
+                scoresMode: action.state?.scoresMode || initialState.scoresMode,
+                theme: action.state?.theme || initialState.theme
             };
         default:
             return state;
@@ -268,6 +277,7 @@ export function useGameLogic() {
     const startMatch = () => dispatch({ type: "START_MATCH" });
     const setLanguage = (language: "ko" | "en") => dispatch({ type: "SET_LANGUAGE", language });
     const setScoresMode = (mode: "bwf" | "simple") => dispatch({ type: "SET_SCORES_MODE", mode });
+    const setTheme = (theme: "classic" | "retro") => dispatch({ type: "SET_THEME", theme });
     const decrementScore = (player: Player) => dispatch({ type: "DECREMENT_SCORE", player });
 
     return {
@@ -281,6 +291,7 @@ export function useGameLogic() {
         startMatch,
         setLanguage,
         setScoresMode,
+        setTheme,
         decrementScore
     };
 }
