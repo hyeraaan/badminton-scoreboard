@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { useVoiceAnnouncer } from "@/hooks/useVoiceAnnouncer";
 import styles from "./ScoreBoard.module.css";
-import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, MinusCircle, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil, Play } from "lucide-react";
+import { Globe, Settings, Volume2, VolumeX, Undo2, RefreshCw, Minus, MinusCircle, Download, CircleHelp, Maximize, Minimize, Gamepad2, Award, Pencil, Play, ChevronRight } from "lucide-react";
 import { BadmintonCock } from "@/components/icons/BadmintonCock";
 
 // Extend native types to support vendor prefixes
@@ -434,9 +434,13 @@ export default function ScoreBoard() {
                                         speak(loveAll);
                                         nextSet();
                                     }}
-                                    className={styles.newGameButton}
+                                    className={state.theme === 'retro' ? `nes-btn is-error` : `${styles.iconButton} ${styles.redButton}`}
+                                    style={state.theme === 'retro' ? { display: 'flex', gap: '8px', alignItems: 'center', padding: '8px 16px' } : { padding: '10px 20px' }}
                                 >
-                                    {t.nextSet}
+                                    <ChevronRight style={state.theme === 'retro' ? { width: '16px', height: '16px' } : { width: '20px', height: '20px' }} />
+                                    <span style={state.theme === 'retro' ? {} : { marginLeft: '8px' }}>
+                                        {t.nextSet}
+                                    </span>
                                 </button>
                             </div>
                         </>
@@ -495,13 +499,26 @@ export default function ScoreBoard() {
                                     {state.language === 'ko' ? '최종' : 'Final'}: {state.sets.player1} - {state.sets.player2}
                                 </div>
 
-                                <div className={styles.overlayButtonsRow}>
-                                    <button onClick={saveResultAsImage} className={styles.newGameButton} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <Download size={20} />
-                                        {state.language === 'ko' ? '저장' : 'Save'}
+                                <div className={styles.overlayButtonsRow} style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                                    <button
+                                        onClick={saveResultAsImage}
+                                        className={state.theme === 'retro' ? `nes-btn is-error` : `${styles.iconButton} ${styles.redButton}`}
+                                        style={state.theme === 'retro' ? { display: 'flex', gap: '8px', alignItems: 'center', padding: '8px 16px' } : { padding: '10px 20px' }}
+                                    >
+                                        <Download style={state.theme === 'retro' ? { width: '16px', height: '16px' } : { width: '20px', height: '20px' }} />
+                                        <span style={state.theme === 'retro' ? {} : { marginLeft: '8px' }}>
+                                            {state.language === 'ko' ? '저장' : 'Save'}
+                                        </span>
                                     </button>
-                                    <button onClick={resetGame} className={styles.newGameButton}>
-                                        {t.newGame}
+                                    <button
+                                        onClick={resetGame}
+                                        className={state.theme === 'retro' ? `nes-btn is-error` : `${styles.iconButton} ${styles.redButton}`}
+                                        style={state.theme === 'retro' ? { display: 'flex', gap: '8px', alignItems: 'center', padding: '8px 16px' } : { padding: '10px 20px' }}
+                                    >
+                                        <RefreshCw style={state.theme === 'retro' ? { width: '16px', height: '16px' } : { width: '20px', height: '20px' }} />
+                                        <span style={state.theme === 'retro' ? {} : { marginLeft: '8px' }}>
+                                            {t.newGame}
+                                        </span>
                                     </button>
                                 </div>
                             </div>
@@ -522,7 +539,7 @@ export default function ScoreBoard() {
                                 if (!isMuted) speak(state.language === 'ko' ? "경기를 시작합니다" : "Match Start");
                                 startMatch();
                             }}
-                            className={state.theme === 'retro' ? `nes-btn` : styles.iconButton}
+                            className={state.theme === 'retro' ? `nes-btn is-error` : `${styles.iconButton} ${styles.redButton}`}
                             style={state.theme === 'retro' ? { display: 'flex', gap: '8px', alignItems: 'center', padding: '8px 16px', fontSize: '14px' } : { padding: '10px 20px', fontSize: '1rem' }}
                         >
                             <Play fill="currentColor" style={state.theme === 'retro' ? { width: '16px', height: '16px' } : { width: '20px', height: '20px' }} />

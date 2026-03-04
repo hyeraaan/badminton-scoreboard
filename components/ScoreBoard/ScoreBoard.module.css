@@ -311,6 +311,18 @@
     border-radius: 9999px;
 }
 
+/* Red Button Variant for Classic Mode */
+.redButton {
+    background-color: #ef4444 !important;
+    color: white !important;
+    border-color: #dc2626 !important;
+}
+
+.redButton:hover {
+    background-color: #dc2626 !important;
+    opacity: 0.9;
+}
+
 /* Buttons - Shadcn Style (Ghost/Outline) */
 .iconButton {
     display: flex;
